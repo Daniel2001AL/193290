@@ -404,3 +404,15 @@ spec:
         persistentVolumeClaim:
           claimName: pvc-mysql
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: daniel2-namespace
+spec:
+  selector:
+    app: mysql-server
+  ports:
+    - port: 5303
+      targetPort: 3306
+  type: LoadBalancer
