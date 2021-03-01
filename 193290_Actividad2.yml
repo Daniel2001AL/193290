@@ -143,3 +143,13 @@ provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-mongo
+  namespace: daniel2-namespace
+data:
+  mongo.user: root
+  mongo.password: 132719
+  mongo.db: mongodb
+---
