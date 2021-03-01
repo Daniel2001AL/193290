@@ -200,3 +200,16 @@ spec:
         persistentVolumeClaim:
            claimName: pvc-mongo
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+  namespace: daniel2-namespace
+spec:
+  selector:
+    app: mongo-server
+  ports:
+    - port: 5302
+      targetPort: 27017
+  type: LoadBalancer
+---
