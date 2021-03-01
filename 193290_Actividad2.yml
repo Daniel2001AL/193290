@@ -91,3 +91,17 @@ spec:
       - name: postgres-db-volume1
         persistentVolumeClaim:
            claimName: pvc-postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: daniel2-namespace
+spec:
+  selector:
+    app: postgres-server
+  ports:
+    - port: 5300
+      targetPort: 5432
+  type: LoadBalancer
+---
