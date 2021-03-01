@@ -131,6 +131,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-mongo
   namespace: daniel2-namespace
+  labels:
+    app: mongo-server
 spec:
   storageClassName: sc-mongo
   accessModes:
@@ -153,10 +155,12 @@ kind: ConfigMap
 metadata:
   name: cm-mongo
   namespace: daniel2-namespace
+  labels:
+    app: mongo-server
 data:
-  mongo.user: root
-  mongo.password: mongops
-  mongo.db: mongodb
+  mongo.user: "mongodb"
+  mongo.password: "mongops"
+  mongo.db: "mongodb"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -182,7 +186,7 @@ spec:
         - containerPort: 27017
           protocol: TCP
         volumeMounts:
-        - mountPath: /var/lib/mongodb/data
+        - mountPath: /data/db
           name: mongo-db-volume1
         env:
           - name: MONGO_INITDB_ROOT_USERNAME
@@ -195,7 +199,7 @@ spec:
               configMapKeyRef:
                 name: cm-mongo
                 key: mongo.password
-          - name: MONGO_INITDB_DATABASE
+          - name: MONGO_INITDB_ROOT_DB
             valueFrom:
               configMapKeyRef:
                 name: cm-mongo
@@ -210,6 +214,8 @@ kind: Service
 metadata:
   name: mongo-service
   namespace: daniel2-namespace
+  labels:
+    app: mongo-server
 spec:
   selector:
     app: mongo-server
@@ -239,6 +245,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-redis
   namespace: daniel2-namespace
+  labels:
+    app: redis-server
 spec:
   storageClassName: sc-redis
   accessModes:
@@ -261,8 +269,11 @@ kind: ConfigMap
 metadata:
   name: cm-redis
   namespace: daniel2-namespace
+  labels:
+    app: redis-server
 data:
-  redis.password: redisps
+  redis.password: "redisps"
+  redis.db: "redisdb"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -282,13 +293,13 @@ spec:
         app: redis-server
     spec:
       containers:
-      - image: redis
+      - image: redis:latest
         name: redis-db1
         ports:
         - containerPort: 6379
           protocol: TCP
         volumeMounts:
-        - mountPath: /var/lib/redis
+        - mountPath: /data
           name: redis-db-volume1
         env:
           - name: REDIS_PASSWORD
@@ -296,6 +307,11 @@ spec:
               configMapKeyRef:
                 name: cm-redis
                 key: redis.password
+          - name: REDIS_DB
+            valueFrom:
+              configMapKeyRef:
+                name: cm-redis
+                key: redis.db
       volumes:
       - name: redis-db-volume1
         persistentVolumeClaim:
@@ -306,12 +322,15 @@ kind: Service
 metadata:
   name: redis-service
   namespace: daniel2-namespace
+  labels:
+    app: redis-server
 spec:
   selector:
     app: redis-server
   ports:
     - port: 5301
       targetPort: 6379
+      protocol: TCP
   type: LoadBalancer
 ---
 
