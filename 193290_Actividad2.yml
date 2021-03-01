@@ -45,3 +45,49 @@ data:
   postgres.password: 130801
   postgres.db: postgresdb
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  namespace: daniel2-namespace
+  labels:
+    app: postgres-server
+spec:
+  selector:
+    matchLabels:
+      app: postgres-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-server
+    spec:
+      containers:
+      - image: postgres:11
+        name: postgres-db1
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-db-volume1
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: cm-postgres
+                key: postgres.user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: cm-postgres
+                key: postgres.password
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: cm-postgres
+                key: postgres.db
+      volumes:
+      - name: postgres-db-volume1
+        persistentVolumeClaim:
+           claimName: pvc-postgres
