@@ -1,3 +1,8 @@
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: daniel2-namespace
 # PostgreSQL
 apiVersion: v1
 kind: PersistentVolume
@@ -5,7 +10,7 @@ metadata:
   name: postgres-vol
   namespace: daniel2-namespace
 spec:
-  storageClassName: sc-postgres
+  storageClassName: sc2-postgres
   capacity:
     storage: 10Gi
   accessModes:
@@ -19,7 +24,7 @@ metadata:
   name: pvc-postgres
   namespace: daniel2-namespace
 spec:
-  storageClassName: sc-postgres
+  storageClassName: sc2-postgres
   accessModes:
     - ReadWriteOnce
   resources:
@@ -29,7 +34,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: sc-postgres
+  name: sc2-postgres
   namespace: daniel2-namespace
 provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain
@@ -42,7 +47,7 @@ metadata:
   namespace: daniel2-namespace
 data:
   postgres.user: postgres
-  postgres.password: 130801
+  postgres.password: postgresps
   postgres.db: postgresdb
 ---
 apiVersion: apps/v1
@@ -150,7 +155,7 @@ metadata:
   namespace: daniel2-namespace
 data:
   mongo.user: root
-  mongo.password: 132719
+  mongo.password: mongops
   mongo.db: mongodb
 ---
 apiVersion: apps/v1
@@ -257,7 +262,7 @@ metadata:
   name: cm-redis
   namespace: daniel2-namespace
 data:
-  redis.password: redis2021
+  redis.password: redisps
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -354,7 +359,7 @@ metadata:
   namespace: daniel2-namespace
 data:
   mysql.user: root
-  mysql.password: 132719
+  mysql.password: mysqlps
   mysql.db: mysqldb
 ---
 apiVersion: apps/v1
