@@ -1,0 +1,47 @@
+# PostgreSQL
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-vol
+  namespace: daniel2-namespace
+spec:
+  storageClassName: sc-postgres
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/postgres-vol1"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-postgres
+  namespace: daniel2-namespace
+spec:
+  storageClassName: sc-postgres
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-postgres
+  namespace: daniel2-namespace
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-postgres
+  namespace: daniel2-namespace
+data:
+  postgres.user: postgres
+  postgres.password: 130801
+  postgres.db: postgresdb
+---
