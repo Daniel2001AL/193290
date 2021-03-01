@@ -296,3 +296,16 @@ spec:
         persistentVolumeClaim:
            claimName: pvc-redis
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: daniel2-namespace
+spec:
+  selector:
+    app: redis-server
+  ports:
+    - port: 5301
+      targetPort: 6379
+  type: LoadBalancer
+---
