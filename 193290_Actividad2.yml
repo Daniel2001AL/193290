@@ -153,3 +153,50 @@ data:
   mongo.password: 132719
   mongo.db: mongodb
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  namespace: daniel2-namespace
+  labels:
+    app: mongo-server
+spec:
+  selector:
+    matchLabels:
+      app: mongo-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo-server
+    spec:
+      containers:
+      - image: mongo
+        name: mongo-db1
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/mongodb/data
+          name: mongo-db-volume1
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mongo
+                key: mongo.user
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mongo
+                key: mongo.password
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mongo
+                key: mongo.db
+      volumes:
+      - name: mongo-db-volume1
+        persistentVolumeClaim:
+           claimName: pvc-mongo
+---
