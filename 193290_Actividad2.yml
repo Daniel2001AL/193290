@@ -347,3 +347,13 @@ provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-mysql
+  namespace: daniel2-namespace
+data:
+  mysql.user: root
+  mysql.password: 132719
+  mysql.db: mysqldb
+---
