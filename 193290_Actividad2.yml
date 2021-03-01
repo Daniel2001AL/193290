@@ -357,3 +357,50 @@ data:
   mysql.password: 132719
   mysql.db: mysqldb
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: daniel2-namespace
+  labels:
+    app: mysql-server
+spec:
+  selector:
+    matchLabels:
+      app: mysql-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-server
+    spec:
+      containers:
+      - image: mysql:8
+        name: mysql-db1
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-db-volume1
+        env:
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mysql
+                key: mysql.user
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mysql
+                key: mysql.password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: cm-mysql
+                key: mysql.db
+      volumes:
+      - name: mysql-db-volume1
+        persistentVolumeClaim:
+          claimName: pvc-mysql
+---
